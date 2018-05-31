@@ -13,7 +13,7 @@ public class CharacterParserTest{
     {
         Parser parser =  character('A');
         ParseResult result = parser.parse("A");
-        assertEquals(ParseResult.Ok, result);
+        assertEquals(ParseResult.Ok(""), result);
     }
 }
 
@@ -33,10 +33,35 @@ class CharacterParser implements Parser {
 
     @Override
     public ParseResult parse(String input) {
-        return ParseResult.Ok;
+        return ParseResult.Ok("");
     }
 }
 
-enum ParseResult {
-    Ok,
+abstract class ParseResult {
+    public static ParseResult Ok(String remainingInput) {
+        return new OkParseResult(remainingInput);
+    }
+}
+
+class OkParseResult extends ParseResult {
+    private String input;
+
+    public OkParseResult(String remainingInput){
+        this.input = remainingInput;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OkParseResult that = (OkParseResult) o;
+
+        return input.equals(that.input);
+    }
+
+    @Override
+    public int hashCode() {
+        return input.hashCode();
+    }
 }
