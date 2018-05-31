@@ -12,8 +12,8 @@ public class CharacterParserTest{
     public void should_parse_a_single_character()
     {
         Parser parser =  character('A');
-        ParseResult result = parser.parse("A");
-        assertEquals(ParseResult.Ok(""), result);
+        ParseResult result = parser.parse("ABC");
+        assertEquals(ParseResult.Ok('A', "BC"), result);
     }
 }
 
@@ -33,20 +33,22 @@ class CharacterParser implements Parser<String> {
 
     @Override
     public ParseResult parse(String input) {
-        return ParseResult.Ok("");
+        return ParseResult.Ok('A',"BC");
     }
 }
 
 abstract class ParseResult {
-    public static ParseResult Ok(String remainingInput) {
-        return new OkParseResult(remainingInput);
+    public static ParseResult Ok(char result, String remainingInput) {
+        return new OkParseResult(result, remainingInput);
     }
 }
 
 class OkParseResult extends ParseResult {
-    private String input;
+    private final char result;
+    private final String input;
 
-    public OkParseResult(String remainingInput){
+    public OkParseResult(char result, String remainingInput){
+        this.result = result;
         this.input = remainingInput;
     }
 
@@ -57,11 +59,14 @@ class OkParseResult extends ParseResult {
 
         OkParseResult that = (OkParseResult) o;
 
-        return input.equals(that.input);
+        if (result != that.result) return false;
+        return input != null ? input.equals(that.input) : that.input == null;
     }
 
     @Override
     public int hashCode() {
-        return input.hashCode();
+        int result1 = (int) result;
+        result1 = 31 * result1 + (input != null ? input.hashCode() : 0);
+        return result1;
     }
 }
