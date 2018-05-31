@@ -13,7 +13,7 @@ public class CharacterParserTest{
     {
         Parser parser =  character('A');
         ParseResult result = parser.parse("ABC");
-        assertEquals(ParseResult.Ok('A', "BC"), result);
+        assertEquals(ParseResult.Ok(Character.valueOf('A'), "BC"), result);
     }
 }
 
@@ -32,22 +32,22 @@ class CharacterParser implements Parser<String> {
     }
 
     @Override
-    public ParseResult parse(String input) {
-        return ParseResult.Ok('A',"BC");
+    public ParseResult<Character> parse(String input) {
+        return ParseResult.Ok(Character.valueOf('A'),"BC");
     }
 }
 
-abstract class ParseResult {
-    public static ParseResult Ok(char result, String remainingInput) {
+abstract class ParseResult<O> {
+    public static <P> ParseResult<P> Ok(P result, String remainingInput) {
         return new OkParseResult(result, remainingInput);
     }
 }
 
-class OkParseResult extends ParseResult {
-    private final char result;
+class OkParseResult<O> extends ParseResult<O> {
+    private final O result;
     private final String input;
 
-    public OkParseResult(char result, String remainingInput){
+    public OkParseResult(O result, String remainingInput){
         this.result = result;
         this.input = remainingInput;
     }
@@ -57,16 +57,16 @@ class OkParseResult extends ParseResult {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        OkParseResult that = (OkParseResult) o;
+        OkParseResult<?> that = (OkParseResult<?>) o;
 
-        if (result != that.result) return false;
-        return input != null ? input.equals(that.input) : that.input == null;
+        if (!result.equals(that.result)) return false;
+        return input.equals(that.input);
     }
 
     @Override
     public int hashCode() {
-        int result1 = (int) result;
-        result1 = 31 * result1 + (input != null ? input.hashCode() : 0);
+        int result1 = result.hashCode();
+        result1 = 31 * result1 + input.hashCode();
         return result1;
     }
 }
