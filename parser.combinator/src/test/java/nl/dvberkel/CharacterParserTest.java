@@ -17,11 +17,11 @@ public class CharacterParserTest{
     }
 }
 
-interface Parser<I> {
-    ParseResult parse(I input);
+interface Parser<I, O> {
+    ParseResult<O> parse(I input);
 }
 
-class CharacterParser implements Parser<String> {
+class CharacterParser implements Parser<String, Character> {
     public static CharacterParser character(char character){
         return new CharacterParser(character);
     }
