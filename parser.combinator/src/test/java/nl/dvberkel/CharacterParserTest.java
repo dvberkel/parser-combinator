@@ -11,8 +11,8 @@ public class CharacterParserTest{
     @Test
     public void should_parse_a_single_character()
     {
-        Parser parser =  character('A');
-        ParseResult result = parser.parse("ABC");
+        Parser<String> parser =  character('A');
+        ParseResult<Character> result = parser.parse("ABC");
         assertEquals(ParseResult.Ok(Character.valueOf('A'), "BC"), result);
     }
 }
