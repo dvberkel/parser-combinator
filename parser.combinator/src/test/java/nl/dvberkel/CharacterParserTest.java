@@ -10,7 +10,7 @@ import org.junit.Test;
 public class CharacterParserTest {
 
     @Test
-    public void should_parse_a_single_character() {
+    public void should_parse_a_single_character_A() {
         Parser<Character, Character> parser = character('A');
         Input<Character> input = new StringInput("ABC");
 
@@ -20,7 +20,7 @@ public class CharacterParserTest {
     }
 
     @Test
-    public void should_parse_a_single_character_if_characters_match() {
+    public void should_parse_a_single_character_A_only_if_characters_match() {
         Parser<Character, Character> parser = character('A');
         Input<Character> input = new StringInput("BC");
 
@@ -28,5 +28,26 @@ public class CharacterParserTest {
 
         assertEquals(ParseResult.Error("Expected character 'A'", input), result);
     }
+
+    @Test
+    public void should_parse_a_single_character_B() {
+        Parser<Character, Character> parser = character('B');
+        Input<Character> input = new StringInput("BCA");
+
+        ParseResult<Character, Character> result = parser.parse(input);
+
+        assertEquals(ParseResult.Ok(Character.valueOf('B'), input.advance()), result);
+    }
+
+    @Test
+    public void should_parse_a_single_character_B_if_characters_match() {
+        Parser<Character, Character> parser = character('B');
+        Input<Character> input = new StringInput("ABC");
+
+        ParseResult<Character, Character> result = parser.parse(input);
+
+        assertEquals(ParseResult.Error("Expected character 'B'", input), result);
+    }
+
 }
 

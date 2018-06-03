@@ -18,11 +18,11 @@ public class CharacterParser implements Parser<Character, Character> {
 
     @Override
     public ParseResult<Character, Character> parse(Input<Character> input) {
-        if (input.peek().equals(Character.valueOf('A'))) {
+        if (input.peek().equals(Character.valueOf(expectedCharacter))) {
             Tuple<Character, Input<Character>> pop = input.pop();
             return ParseResult.Ok(pop.first(), pop.second());
         } else {
-            return ParseResult.Error("Expected character 'A'", input);
+            return ParseResult.Error(String.format("Expected character '%s'", expectedCharacter), input);
         }
     }
 }
