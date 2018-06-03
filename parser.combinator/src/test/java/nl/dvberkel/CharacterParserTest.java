@@ -10,26 +10,32 @@ public class CharacterParserTest {
 
     @Test
     public void should_parse_a_single_character() {
-        Parser<String, Character> parser = character('A');
-        ParseResult<Character> result = parser.parse("ABC");
-        assertEquals(ParseResult.Ok(Character.valueOf('A'), "BC"), result);
+        Parser<Character, Character> parser = character('A');
+        Input<Character> input = new StringInput("ABC");
+
+        ParseResult<Character, Character> result = parser.parse(input);
+
+        assertEquals(ParseResult.Ok(Character.valueOf('A'),new StringInput(1,"ABC")), result);
     }
 
     @Test
     public void should_parse_a_single_character_if_characters_match() {
-        Parser<String, Character> parser = character('A');
-        ParseResult<Character> result = parser.parse("BC");
-        assertEquals(ParseResult.Error("Expected character 'A'", "BC"), result);
+        Parser<Character, Character> parser = character('A');
+        Input<Character> input = new StringInput("BC");
+
+        ParseResult<Character, Character> result = parser.parse(input);
+
+        assertEquals(ParseResult.Error("Expected character 'A'", input), result);
     }
 }
 
 interface Parser<I, O> {
-    ParseResult<O> parse(I input);
+    ParseResult<I, O> parse(Input<I> input);
 }
 
 interface Input<I> {
     I peek();
-    Tuple<I, Input> pop();
+    Tuple<I, Input<I>> pop();
 }
 
 class StringInput implements Input<Character> {
@@ -40,7 +46,7 @@ class StringInput implements Input<Character> {
         this(0, source);
     }
 
-    private StringInput(int index, String source) {
+    public StringInput(int index, String source) {
         this.index = index;
         this.source = source;
     }
@@ -49,9 +55,26 @@ class StringInput implements Input<Character> {
         return Character.valueOf(source.charAt(index));
     }
 
-    public Tuple<Character, Input> pop() {
+    public Tuple<Character, Input<Character>> pop() {
         return Tuple.of(Character.valueOf(source.charAt(index)), new StringInput(index+1, source));
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        StringInput that = (StringInput) o;
+
+        if (index != that.index) return false;
+        return source.equals(that.source);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = index;
+        result = 31 * result + source.hashCode();
+        return result;
     }
 }
 
@@ -77,7 +100,7 @@ class Tuple<L, R> {
     }
 }
 
-class CharacterParser implements Parser<String, Character> {
+class CharacterParser implements Parser<Character, Character> {
     public static CharacterParser character(char character) {
         return new CharacterParser(character);
     }
@@ -89,29 +112,30 @@ class CharacterParser implements Parser<String, Character> {
     }
 
     @Override
-    public ParseResult<Character> parse(String input) {
-        if (input.startsWith("A")) {
-            return ParseResult.Ok(Character.valueOf('A'), "BC");
+    public ParseResult<Character, Character> parse(Input<Character> input) {
+        if (input.peek().equals(Character.valueOf('A'))) {
+            Tuple<Character, Input<Character>> pop = input.pop();
+            return ParseResult.Ok(pop.first(), pop.second());
         } else {
-            return ParseResult.Error("Expected character 'A'", "BC");
+            return ParseResult.Error("Expected character 'A'", input);
         }
     }
 }
 
-abstract class ParseResult<O> {
-    public static <P> ParseResult<P> Ok(P result, String remainingInput) {
+abstract class ParseResult<I, O> {
+    public static <U, V> ParseResult<U, V> Ok(V result, Input<U> remainingInput) {
         return new Ok(result, remainingInput);
     }
 
-    public static <P> ParseResult<P> Error(String message, String remainingInput) {
+    public static <U, V> ParseResult<U, V> Error(String message, Input<U> remainingInput) {
         return new Error(message, remainingInput);
     }
 
-    private static class Ok<O> extends ParseResult<O> {
+    private static class Ok<I, O> extends ParseResult<I, O> {
         private final O result;
-        private final String input;
+        private final Input<I> input;
 
-        public Ok(O result, String remainingInput) {
+        public Ok(O result, Input<I> remainingInput) {
             this.result = result;
             this.input = remainingInput;
         }
@@ -121,7 +145,7 @@ abstract class ParseResult<O> {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            Ok<?> that = (Ok<?>) o;
+            Ok<?,?> that = (Ok<?,?>) o;
 
             if (!result.equals(that.result)) return false;
             return input.equals(that.input);
@@ -135,11 +159,11 @@ abstract class ParseResult<O> {
         }
     }
 
-    private static class Error<O> extends ParseResult<O> {
+    private static class Error<I, O> extends ParseResult<I, O> {
         private final String message;
-        private final String input;
+        private final Input<I> input;
 
-        public Error(String message, String remainingInput) {
+        public Error(String message, Input<I> remainingInput) {
             this.message = message;
             this.input = remainingInput;
         }
@@ -149,7 +173,7 @@ abstract class ParseResult<O> {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            Error<?> that = (Error<?>) o;
+            Error<?,?> that = (Error<?,?>) o;
 
             if (!message.equals(that.message)) return false;
             return input.equals(that.input);
