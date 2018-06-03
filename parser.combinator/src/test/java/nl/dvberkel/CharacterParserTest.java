@@ -51,19 +51,19 @@ class CharacterParser implements Parser<String, Character> {
 
 abstract class ParseResult<O> {
     public static <P> ParseResult<P> Ok(P result, String remainingInput) {
-        return new OkParseResult(result, remainingInput);
+        return new Ok(result, remainingInput);
     }
 
     public static <P> ParseResult<P> Error(String message, String remainingInput) {
-        return new ErrorParseResult(message, remainingInput);
+        return new Error(message, remainingInput);
     }
 }
 
-class OkParseResult<O> extends ParseResult<O> {
+class Ok<O> extends ParseResult<O> {
     private final O result;
     private final String input;
 
-    public OkParseResult(O result, String remainingInput){
+    public Ok(O result, String remainingInput){
         this.result = result;
         this.input = remainingInput;
     }
@@ -73,7 +73,7 @@ class OkParseResult<O> extends ParseResult<O> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        OkParseResult<?> that = (OkParseResult<?>) o;
+        Ok<?> that = (Ok<?>) o;
 
         if (!result.equals(that.result)) return false;
         return input.equals(that.input);
@@ -87,11 +87,11 @@ class OkParseResult<O> extends ParseResult<O> {
     }
 }
 
-class ErrorParseResult<O> extends ParseResult<O> {
+class Error<O> extends ParseResult<O> {
     private final String message;
     private final String input;
 
-    public ErrorParseResult(String message, String remainingInput) {
+    public Error(String message, String remainingInput) {
         this.message = message;
         this.input = remainingInput;
     }
@@ -101,7 +101,7 @@ class ErrorParseResult<O> extends ParseResult<O> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ErrorParseResult<?> that = (ErrorParseResult<?>) o;
+        Error<?> that = (Error<?>) o;
 
         if (!message.equals(that.message)) return false;
         return input.equals(that.input);
