@@ -34,11 +34,11 @@ public class SequenceParser<I, O> implements Parser<I, List<O>> {
                 return new ParseResult.Ok(result, secondOk.input);
             } else {
                 ParseResult.Error<I, O> secondError = (ParseResult.Error) secondResult;
-                return ParseResult.Error(secondError.message, secondError.input);
+                return ParseResult.Error(secondError.message, input);
             }
         } else {
             ParseResult.Error<I, O> firstError = (ParseResult.Error) firstResult;
-            return ParseResult.Error(firstError.message, firstError.input);
+            return ParseResult.Error(firstError.message, input);
         }
     }
 }
