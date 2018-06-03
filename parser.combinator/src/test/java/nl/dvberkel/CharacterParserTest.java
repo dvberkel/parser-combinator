@@ -27,12 +27,12 @@ interface Parser<I, O> {
     ParseResult<O> parse(I input);
 }
 
-interface Input {
-    Character peek();
-    Tuple<Character, Input> pop();
+interface Input<I> {
+    I peek();
+    Tuple<I, Input> pop();
 }
 
-class StringInput implements Input {
+class StringInput implements Input<Character> {
     private final int index;
     private final String source;
 
