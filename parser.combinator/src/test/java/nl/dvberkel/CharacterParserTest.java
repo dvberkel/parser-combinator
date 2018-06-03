@@ -15,6 +15,14 @@ public class CharacterParserTest{
         ParseResult<Character> result = parser.parse("ABC");
         assertEquals(ParseResult.Ok(Character.valueOf('A'), "BC"), result);
     }
+
+    @Test
+    public void should_parse_a_single_character_if_characters_match()
+    {
+        Parser<String, Character> parser =  character('A');
+        ParseResult<Character> result = parser.parse("BC");
+        assertEquals(ParseResult.Error("Expected character 'A'", "BC"), result);
+    }
 }
 
 interface Parser<I, O> {
@@ -33,13 +41,21 @@ class CharacterParser implements Parser<String, Character> {
 
     @Override
     public ParseResult<Character> parse(String input) {
-        return ParseResult.Ok(Character.valueOf('A'),"BC");
+        if (input.startsWith("A")) {
+            return ParseResult.Ok(Character.valueOf('A'),"BC");
+        } else {
+            return ParseResult.Error("Expected character 'A'", "BC");
+        }
     }
 }
 
 abstract class ParseResult<O> {
     public static <P> ParseResult<P> Ok(P result, String remainingInput) {
         return new OkParseResult(result, remainingInput);
+    }
+
+    public static <P> ParseResult<P> Error(String message, String remainingInput) {
+        return new ErrorParseResult(message, remainingInput);
     }
 }
 
@@ -68,5 +84,33 @@ class OkParseResult<O> extends ParseResult<O> {
         int result1 = result.hashCode();
         result1 = 31 * result1 + input.hashCode();
         return result1;
+    }
+}
+
+class ErrorParseResult<O> extends ParseResult<O> {
+    private final String message;
+    private final String input;
+
+    public ErrorParseResult(String message, String remainingInput) {
+        this.message = message;
+        this.input = remainingInput;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ErrorParseResult<?> that = (ErrorParseResult<?>) o;
+
+        if (!message.equals(that.message)) return false;
+        return input.equals(that.input);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = message.hashCode();
+        result = 31 * result + input.hashCode();
+        return result;
     }
 }
