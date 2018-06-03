@@ -45,4 +45,10 @@ public class StringInput implements Input<Character> {
         result = 31 * result + source.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Input<%d, \"%s\">", index, source);
+    }
+
 }

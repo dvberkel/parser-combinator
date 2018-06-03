@@ -19,7 +19,7 @@ public class CharacterParserTest {
 
         ParseResult<Character, Character> result = parser.parse(input);
 
-        Assert.assertEquals(ParseResult.Ok(Character.valueOf('A'), input.advance()), result);
+        assertEquals(ParseResult.Ok(Character.valueOf('A'), input.advance()), result);
     }
 
     @Test
@@ -29,7 +29,7 @@ public class CharacterParserTest {
 
         ParseResult<Character, Character> result = parser.parse(input);
 
-        Assert.assertEquals(ParseResult.Error("Expected character 'A'", input), result);
+        assertEquals(ParseResult.Error("Expected character 'A'", input), result);
     }
 
     @Test
@@ -39,7 +39,7 @@ public class CharacterParserTest {
 
         ParseResult<Character, Character> result = parser.parse(input);
 
-        Assert.assertEquals(ParseResult.Ok(Character.valueOf('B'), input.advance()), result);
+        assertEquals(ParseResult.Ok(Character.valueOf('B'), input.advance()), result);
     }
 
     @Test
@@ -49,7 +49,7 @@ public class CharacterParserTest {
 
         ParseResult<Character, Character> result = parser.parse(input);
 
-        Assert.assertEquals(ParseResult.Error("Expected character 'B'", input), result);
+        assertEquals(ParseResult.Error("Expected character 'B'", input), result);
     }
 
 }

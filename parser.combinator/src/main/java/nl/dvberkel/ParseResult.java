@@ -9,13 +9,20 @@ public abstract class ParseResult<I, O> {
         return new Error(message, remainingInput);
     }
 
-    private static class Ok<I, O> extends ParseResult<I, O> {
-        private final O result;
-        private final Input<I> input;
+    public abstract boolean isOk();
+
+    public static class Ok<I, O> extends ParseResult<I, O> {
+        public final O result;
+        public final Input<I> input;
 
         public Ok(O result, Input<I> remainingInput) {
             this.result = result;
             this.input = remainingInput;
+        }
+
+        @Override
+        public boolean isOk() {
+            return true;
         }
 
         @Override
@@ -35,15 +42,25 @@ public abstract class ParseResult<I, O> {
             result1 = 31 * result1 + input.hashCode();
             return result1;
         }
+
+        @Override
+        public String toString() {
+            return String.format("Ok(%s, %s)", result, input);
+        }
     }
 
-    private static class Error<I, O> extends ParseResult<I, O> {
-        private final String message;
-        private final Input<I> input;
+    public static class Error<I, O> extends ParseResult<I, O> {
+        public final String message;
+        public final Input<I> input;
 
         public Error(String message, Input<I> remainingInput) {
             this.message = message;
             this.input = remainingInput;
+        }
+
+        @Override
+        public boolean isOk() {
+            return false;
         }
 
         @Override
@@ -62,6 +79,11 @@ public abstract class ParseResult<I, O> {
             int result = message.hashCode();
             result = 31 * result + input.hashCode();
             return result;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("Error(%s, %s)", message, input);
         }
     }
 }
