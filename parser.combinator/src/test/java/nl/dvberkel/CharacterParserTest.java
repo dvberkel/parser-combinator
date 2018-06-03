@@ -27,7 +27,12 @@ interface Parser<I, O> {
     ParseResult<O> parse(I input);
 }
 
-class StringInput {
+interface Input {
+    Character peek();
+    Tuple<Character, Input> pop();
+}
+
+class StringInput implements Input {
     private final int index;
     private final String source;
 
@@ -44,7 +49,7 @@ class StringInput {
         return Character.valueOf(source.charAt(index));
     }
 
-    public Tuple<Character, StringInput> pop() {
+    public Tuple<Character, Input> pop() {
         return Tuple.of(Character.valueOf(source.charAt(index)), new StringInput(index+1, source));
 
     }
