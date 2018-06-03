@@ -15,7 +15,7 @@ public class CharacterParserTest {
 
         ParseResult<Character, Character> result = parser.parse(input);
 
-        assertEquals(ParseResult.Ok(Character.valueOf('A'),new StringInput(1,"ABC")), result);
+        assertEquals(ParseResult.Ok(Character.valueOf('A'), input.advance()), result);
     }
 
     @Test
@@ -36,6 +36,7 @@ interface Parser<I, O> {
 interface Input<I> {
     I peek();
     Tuple<I, Input<I>> pop();
+    Input<I> advance();
 }
 
 class StringInput implements Input<Character> {
@@ -57,6 +58,10 @@ class StringInput implements Input<Character> {
 
     public Tuple<Character, Input<Character>> pop() {
         return Tuple.of(Character.valueOf(source.charAt(index)), new StringInput(index+1, source));
+    }
+
+    public Input<Character> advance() {
+        return new StringInput(index + 1, source);
     }
 
     @Override
