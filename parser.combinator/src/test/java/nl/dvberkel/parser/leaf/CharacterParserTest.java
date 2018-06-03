@@ -1,8 +1,11 @@
-package nl.dvberkel;
+package nl.dvberkel.parser.leaf;
 
 import static nl.dvberkel.parser.leaf.CharacterParser.character;
 import static org.junit.Assert.assertEquals;
 
+import nl.dvberkel.Input;
+import nl.dvberkel.ParseResult;
+import nl.dvberkel.Parser;
 import nl.dvberkel.input.StringInput;
 import org.junit.Test;
 
@@ -16,7 +19,7 @@ public class CharacterParserTest {
 
         ParseResult<Character, Character> result = parser.parse(input);
 
-        assertEquals(ParseResult.Ok(Character.valueOf('A'), input.advance()), result);
+        Assert.assertEquals(ParseResult.Ok(Character.valueOf('A'), input.advance()), result);
     }
 
     @Test
@@ -26,7 +29,7 @@ public class CharacterParserTest {
 
         ParseResult<Character, Character> result = parser.parse(input);
 
-        assertEquals(ParseResult.Error("Expected character 'A'", input), result);
+        Assert.assertEquals(ParseResult.Error("Expected character 'A'", input), result);
     }
 
     @Test
@@ -36,7 +39,7 @@ public class CharacterParserTest {
 
         ParseResult<Character, Character> result = parser.parse(input);
 
-        assertEquals(ParseResult.Ok(Character.valueOf('B'), input.advance()), result);
+        Assert.assertEquals(ParseResult.Ok(Character.valueOf('B'), input.advance()), result);
     }
 
     @Test
@@ -46,7 +49,7 @@ public class CharacterParserTest {
 
         ParseResult<Character, Character> result = parser.parse(input);
 
-        assertEquals(ParseResult.Error("Expected character 'B'", input), result);
+        Assert.assertEquals(ParseResult.Error("Expected character 'B'", input), result);
     }
 
 }
