@@ -27,6 +27,51 @@ interface Parser<I, O> {
     ParseResult<O> parse(I input);
 }
 
+class StringInput {
+    private final int index;
+    private final String source;
+
+    public StringInput(String source) {
+        this(0, source);
+    }
+
+    private StringInput(int index, String source) {
+        this.index = index;
+        this.source = source;
+    }
+
+    public Character peek() {
+        return Character.valueOf(source.charAt(index));
+    }
+
+    public Tuple<Character, StringInput> pop() {
+        return Tuple.of(Character.valueOf(source.charAt(index)), new StringInput(index+1, source));
+
+    }
+}
+
+class Tuple<L, R> {
+    public static <U, V> Tuple<U, V> of(U left, V right) {
+        return new Tuple(left, right);
+    }
+
+    private final L left;
+    private final R right;
+
+    private Tuple(L left, R right) {
+        this.left = left;
+        this.right = right;
+    }
+
+    public L first() {
+        return left;
+    }
+
+    public R second() {
+        return right;
+    }
+}
+
 class CharacterParser implements Parser<String, Character> {
     public static CharacterParser character(char character) {
         return new CharacterParser(character);
