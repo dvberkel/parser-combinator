@@ -3,6 +3,7 @@ package nl.dvberkel.parser.combinator;
 import nl.dvberkel.Input;
 import nl.dvberkel.ParseResult;
 import nl.dvberkel.Parser;
+import nl.dvberkel.util.ParseResultFunction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +38,10 @@ public class SequenceParser<I, O> implements Parser<I, List<O>> {
                 return ParseResult.Error(secondError.message, input);
             }
         } else {
+            ParseResultFunction.Error<I, O, ParseResult<I, List<O>>> f = (message, _input) -> ParseResult.Error(message, input);
+
             ParseResult.Error<I, O> firstError = (ParseResult.Error) firstResult;
-            return ParseResult.Error(firstError.message, input);
+            return f.apply(firstError.message, firstError.input);
         }
     }
 }
